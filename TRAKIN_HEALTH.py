@@ -50,13 +50,21 @@ class HealthTrackerApp(tk.Tk):
         self.geometry("500x600")
         self.configure(bg="#E3F2FD")
 
-        # Shared data: user details, meal selections, sleep, computed metrics.
-        self.user_details = {}  # Will include name, age, weight, height, gender.
+        # Shared data: 
+        # User details (name, age, weight, height, gender)
+        self.user_details = {}
+        # Global metrics (for the currently selected day)
         self.meal_selections = {}
         self.sleep = 0.0
         self.total_calories = 0
         self.bmi = 0
         self.health_score = 0
+
+        # Weekly tracker variables:
+        self.week_days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
+        self.current_day_index = 0
+        # weekly_data: Key = day name, Value = dict of data for that day.
+        self.weekly_data = {}
 
         # Container for all pages
         container = tk.Frame(self)
@@ -119,7 +127,7 @@ class EnterDetailsPage(tk.Frame):
         tk.Label(details_frame, text="Gender:", font=("Arial", 12), bg="#E3F2FD")\
             .grid(row=4, column=0, sticky="e", padx=5, pady=5)
         self.gender_var = tk.StringVar()
-        self.gender_var.set("Male")  # Default value.
+        self.gender_var.set("Male")  # default value
         gender_option = tk.OptionMenu(details_frame, self.gender_var, "Male", "Female")
         gender_option.config(font=("Arial", 12))
         gender_option.grid(row=4, column=1, padx=5, pady=5)
@@ -156,6 +164,20 @@ class IntakePage(tk.Frame):
     def __init__(self, parent, controller):
         tk.Frame.__init__(self, parent, bg="#E3F2FD")
         self.controller = controller
+
+        # Display the current day name at the top center.
+        self.day_label = tk.Label(self, text="", font=("Arial", 14, "bold"), bg="#E3F2FD")
+        self.day_label.pack(pady=5)
+
+        # Navigation buttons for previous/next day.
+        nav_frame = tk.Frame(self, bg="#E3F2FD")
+        nav_frame.pack(pady=5)
+        prev_btn = tk.Button(nav_frame, text="Previous Day", font=("Arial", 12),
+                             bg="#9E9E9E", fg="white", command=self.prev_day)
+        prev_btn.pack(side="left", padx=10)
+        next_btn = tk.Button(nav_frame, text="Next Day", font=("Arial", 12),
+                             bg="#9E9E9E", fg="white", command=self.next_day)
+        next_btn.pack(side="left", padx=10)
 
         title = tk.Label(self, text="Enter Meal Selections & Sleep", font=("Arial", 16, "bold"), bg="#E3F2FD")
         title.pack(pady=10)
@@ -194,8 +216,58 @@ class IntakePage(tk.Frame):
                              command=lambda: controller.show_frame(EnterDetailsPage))
         back_btn.grid(row=0, column=1, padx=10, pady=5)
 
+    def update_data(self):
+        # Update the day label based on the current day index.
+        current_day = self.controller.week_days[self.controller.current_day_index]
+        self.day_label.config(text=current_day)
+        # Load saved data if available for this day.
+        data = self.controller.weekly_data.get(current_day)
+        if data:
+            # Restore meal selections.
+            for meal, var in self.meal_vars.items():
+                value = data.get("meal_selections", {}).get(meal, "Select a dish")
+                var.set(value)
+            # Set sleep hours.
+            self.sleep_entry.delete(0, tk.END)
+            self.sleep_entry.insert(0, str(data.get("sleep", "")))
+        else:
+            # Clear fields if no data exists yet.
+            for meal, var in self.meal_vars.items():
+                var.set("Select a dish")
+            self.sleep_entry.delete(0, tk.END)
+
+    def save_current_day_data(self):
+        # Save the current day's meal selections and sleep.
+        selections = {}
+        total_calories = 0
+        for meal, var in self.meal_vars.items():
+            selected_dish = var.get()
+            selections[meal] = selected_dish
+            total_calories += dishes[meal].get(selected_dish, 0)
+        try:
+            sleep_hours = float(self.sleep_entry.get())
+        except ValueError:
+            sleep_hours = 0
+        current_day = self.controller.week_days[self.controller.current_day_index]
+        # Save without computed metrics.
+        self.controller.weekly_data[current_day] = {
+            "meal_selections": selections,
+            "sleep": sleep_hours,
+            "total_calories": total_calories
+        }
+
+    def prev_day(self):
+        self.save_current_day_data()
+        self.controller.current_day_index = (self.controller.current_day_index - 1) % len(self.controller.week_days)
+        self.update_data()
+
+    def next_day(self):
+        self.save_current_day_data()
+        self.controller.current_day_index = (self.controller.current_day_index + 1) % len(self.controller.week_days)
+        self.update_data()
+
     def calculate_metrics(self):
-        # Save meal choices and sleep hours.
+        # Gather current data.
         selections = {}
         total_calories = 0
         for meal, var in self.meal_vars.items():
@@ -208,29 +280,32 @@ class IntakePage(tk.Frame):
             messagebox.showerror("Error", "Please enter valid sleep hours.")
             return
 
-        self.controller.meal_selections = selections
-        self.controller.sleep = sleep_hours
-
-        # Compute the regular BMI.
+        # Compute the adjusted BMI.
         weight = self.controller.user_details["weight"]
         height = self.controller.user_details["height"]
         bmi = weight / ((height / 100) ** 2)
         age = self.controller.user_details["age"]
         gender = self.controller.user_details.get("gender", "Male")
-        
-        # Adjust BMI based on gender.
-        # Now for males, we subtract 5.4; for females, subtract 16.2 so that females get a lower adjusted BMI.
         if gender == "Male":
             adjusted_bmi = (1.2 * bmi) + (0.23 * age) - 5.4
         else:  # Female
             adjusted_bmi = (1.2 * bmi) + (0.23 * age) - 16.2
 
-        self.controller.bmi = adjusted_bmi
-        self.controller.total_calories = total_calories
-
-        # Compute Health Score using a revised formula.
         score = (sleep_hours * 10) - (total_calories / 200) - adjusted_bmi
         score = max(0, min(score, 100))
+
+        # Store current day data with computed metrics.
+        current_day = self.controller.week_days[self.controller.current_day_index]
+        self.controller.weekly_data[current_day] = {
+            "meal_selections": selections,
+            "sleep": sleep_hours,
+            "total_calories": total_calories,
+            "bmi": adjusted_bmi,
+            "health_score": score
+        }
+        # Also update global variables so that OutputPage shows current day's metrics.
+        self.controller.total_calories = total_calories
+        self.controller.bmi = adjusted_bmi
         self.controller.health_score = score
 
         self.controller.show_frame(OutputPage)
@@ -251,16 +326,13 @@ class OutputPage(tk.Frame):
         btn_frame = tk.Frame(self, bg="#E3F2FD")
         btn_frame.pack(pady=15)
         pie_btn = tk.Button(btn_frame, text="View Calorie Distribution", font=("Arial", 12),
-                            bg="#4CAF50", fg="white",
-                            command=lambda: controller.show_frame(PieChartPage))
+                            bg="#4CAF50", fg="white", command=lambda: controller.show_frame(PieChartPage))
         pie_btn.grid(row=0, column=0, padx=10, pady=5)
         back_btn = tk.Button(btn_frame, text="Back", font=("Arial", 12),
-                             bg="#9E9E9E", fg="white",
-                             command=lambda: controller.show_frame(IntakePage))
+                             bg="#9E9E9E", fg="white", command=lambda: controller.show_frame(IntakePage))
         back_btn.grid(row=0, column=1, padx=10, pady=5)
         home_btn = tk.Button(btn_frame, text="Home", font=("Arial", 12),
-                             bg="#2196F3", fg="white",
-                             command=lambda: controller.show_frame(EnterDetailsPage))
+                             bg="#2196F3", fg="white", command=lambda: controller.show_frame(EnterDetailsPage))
         home_btn.grid(row=0, column=2, padx=10, pady=5)
 
     def update_data(self):
@@ -283,23 +355,20 @@ class PieChartPage(tk.Frame):
         btn_frame = tk.Frame(self, bg="#E3F2FD")
         btn_frame.pack(pady=15)
         back_btn = tk.Button(btn_frame, text="Back", font=("Arial", 12),
-                             bg="#9E9E9E", fg="white",
-                             command=lambda: controller.show_frame(OutputPage))
+                             bg="#9E9E9E", fg="white", command=lambda: controller.show_frame(OutputPage))
         back_btn.grid(row=0, column=0, padx=10, pady=5)
         home_btn = tk.Button(btn_frame, text="Home", font=("Arial", 12),
-                             bg="#2196F3", fg="white",
-                             command=lambda: controller.show_frame(EnterDetailsPage))
+                             bg="#2196F3", fg="white", command=lambda: controller.show_frame(EnterDetailsPage))
         home_btn.grid(row=0, column=1, padx=10, pady=5)
 
     def update_data(self):
-        # Clear any existing chart/labels.
+        # Clear any existing content.
         for widget in self.canvas_frame.winfo_children():
             widget.destroy()
-
         total_calories = self.controller.total_calories
+        # Display Total Calories above the chart.
         tk.Label(self.canvas_frame, text=f"Total Calories: {total_calories} kcal",
                  font=("Arial", 12), bg="#E3F2FD").pack(pady=5)
-
         calorie_intake = {}
         for meal, dish in self.controller.meal_selections.items():
             calorie_intake[meal] = dishes[meal].get(dish, 0) if dish != "Select a dish" else 0
@@ -315,7 +384,6 @@ class PieChartPage(tk.Frame):
                autopct='%1.1f%%', colors=colors)
         ax.set_title("Calorie Distribution")
         fig.tight_layout()
-
         chart = FigureCanvasTkAgg(fig, master=self.canvas_frame)
         chart.draw()
         chart.get_tk_widget().pack(fill="both", expand=True)
