@@ -114,6 +114,15 @@ class EnterDetailsPage(tk.Frame):
         self.height_entry = tk.Entry(details_frame, font=("Arial", 12))
         self.height_entry.grid(row=3, column=1, padx=5, pady=5)
 
+        # Gender Dropdown
+        tk.Label(details_frame, text="Gender:", font=("Arial", 12), bg="#E3F2FD") \
+            .grid(row=4, column=0, sticky="e", padx=5, pady=5)
+        self.gender_var = tk.StringVar(value="Select Gender")
+        gender_dropdown = tk.OptionMenu(details_frame, self.gender_var, "Male", "Female", "Other")
+        gender_dropdown.config(font=("Arial", 12))
+        gender_dropdown.grid(row=4, column=1, padx=5, pady=5)
+
+        # Continue Button
         button = tk.Button(self, text="Next: Enter Intake", font=("Arial", 12),
                            bg="#2196F3", fg="white", command=self.save_details)
         button.pack(pady=15)
@@ -124,16 +133,28 @@ class EnterDetailsPage(tk.Frame):
             age = int(self.age_entry.get())
             weight = float(self.weight_entry.get())
             height = float(self.height_entry.get())
+            gender = self.gender_var.get()
             if not name:
                 messagebox.showerror("Error", "Please enter your name.")
+                return
+            if gender == "Select Gender":
+                messagebox.showerror("Error", "Please select your gender.")
                 return
         except ValueError:
             messagebox.showerror("Error", "Please enter valid numeric values for age, weight, and height.")
             return
 
-        # Save details in the main controller and move to the Intake page
-        self.controller.user_details = {"name": name, "age": age, "weight": weight, "height": height}
+        # Save details in controller
+        self.controller.user_details = {
+            "name": name,
+            "age": age,
+            "weight": weight,
+            "height": height,
+            "gender": gender
+        }
+
         self.controller.show_frame(IntakePage)
+
 
 
 class IntakePage(tk.Frame):
