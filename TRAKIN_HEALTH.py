@@ -7,16 +7,16 @@ from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 dishes = {
     "Breakfast": {
         "Select a dish": 0,
-        "Idli with Sambar (2 pcs)": 300,
-        "UPMA": 132,
-        "ALOO PHARATHA": 300,
-        "POHA": 250,
-        "DOSA": 152,
-        "SCRAMBLED EGGS": 107,
-        "Regular white bread toast": 64,
-        "Chole Bhature (1 plate)": 600,
-        "Paneer Sandwich (2 slices)": 350,
-        "Thepla with Pickle & Curd (2 pcs)": 300
+        "Idli (2 pcs)": 300,
+        "Upma": 132,
+        "Aloo Paratha": 300,
+        "Poha": 250,
+        "Dosa": 152,
+        "Scrambled Eggs": 107,
+        "Toasted white bread": 64,
+        "Chole Bhature": 600,
+        "Paneer Sandwich": 350,
+        "Thepla (2 pcs,with Pickle & Curd)": 300
     },
     "Lunch": {
         "Select a dish": 0,
@@ -33,7 +33,6 @@ dishes = {
     "Dinner": {
         "Select a dish": 0,
         "Chapati with Veg Kurma (2 pcs)": 400,
-        "Dosa with Chutney (1 large)": 350,
         "Roti (2) with Palak Paneer": 450,
         "Dal Tadka with Jeera Rice": 500,
         "Aloo Gobi with Chapati (2)": 450,
