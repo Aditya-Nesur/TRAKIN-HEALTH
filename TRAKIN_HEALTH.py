@@ -94,42 +94,56 @@ class EnterDetailsPage(tk.Frame):
         tk.Frame.__init__(self, parent, bg="#E3F2FD")
         self.controller = controller
 
-        title = tk.Label(self, text="Enter Your Details", font=("Arial", 16, "bold"), bg="#E3F2FD")
+        title = tk.Label(
+            self,
+            text="Enter Your Details",
+            font=("Arial", 50, "bold"),
+            bg="#A9a9a9",
+            fg="#FFFF00",
+            padx=20,
+            pady=10,
+            relief=tk.RAISED,
+            borderwidth=5,
+            anchor=tk.CENTER,
+            cursor="hand2"
+        )
         title.pack(pady=10)
 
         details_frame = tk.Frame(self, bg="#E3F2FD")
         details_frame.pack(pady=10)
 
         # Name entry.
-        tk.Label(details_frame, text="Name:", font=("Arial", 12), bg="#E3F2FD").grid(row=0, column=0, sticky="e", padx=5, pady=5)
-        self.name_entry = tk.Entry(details_frame, font=("Arial", 12))
+        tk.Label(details_frame, text="Name:", font=("Arial",38), bg="#E3F2FD",
+            ).grid(row=0, column=0, sticky="e", padx=5, pady=5)
+        self.name_entry = tk.Entry(details_frame, font=("Arial",38))
         self.name_entry.grid(row=0, column=1, padx=5, pady=5)
 
         # Age entry.
-        tk.Label(details_frame, text="Age:", font=("Arial", 12), bg="#E3F2FD").grid(row=1, column=0, sticky="e", padx=5, pady=5)
-        self.age_entry = tk.Entry(details_frame, font=("Arial", 12))
+        tk.Label(details_frame, text="Age:", font=("Arial",38), bg="#E3F2FD").grid(row=1, column=0, sticky="e", padx=5, pady=5)
+        self.age_entry = tk.Entry(details_frame, font=("Arial",38))
         self.age_entry.grid(row=1, column=1, padx=5, pady=5)
 
         # Weight entry.
-        tk.Label(details_frame, text="Weight (kg):", font=("Arial", 12), bg="#E3F2FD").grid(row=2, column=0, sticky="e", padx=5, pady=5)
-        self.weight_entry = tk.Entry(details_frame, font=("Arial", 12))
+        tk.Label(details_frame, text="Weight (kg):", font=("Arial",38), bg="#E3F2FD").grid(row=2, column=0, sticky="e", padx=5, pady=5)
+        self.weight_entry = tk.Entry(details_frame, font=("Arial",38))
         self.weight_entry.grid(row=2, column=1, padx=5, pady=5)
 
         # Height entry.
-        tk.Label(details_frame, text="Height (cm):", font=("Arial", 12), bg="#E3F2FD").grid(row=3, column=0, sticky="e", padx=5, pady=5)
-        self.height_entry = tk.Entry(details_frame, font=("Arial", 12))
+        tk.Label(details_frame, text="Height (cm):", font=("Arial",38), bg="#E3F2FD").grid(row=3, column=0, sticky="e", padx=5, pady=5)
+        self.height_entry = tk.Entry(details_frame, font=("Arial",38))
         self.height_entry.grid(row=3, column=1, padx=5, pady=5)
 
         # Gender selection.
-        tk.Label(details_frame, text="Gender:", font=("Arial", 12), bg="#E3F2FD").grid(row=4, column=0, sticky="e", padx=5, pady=5)
+        tk.Label(details_frame, text="Gender:", font=("Arial",38), bg="#E3F2FD").grid(row=4, column=0, sticky="e", padx=5, pady=5)
         self.gender_var = tk.StringVar()
         self.gender_var.set("Male")
         gender_option = tk.OptionMenu(details_frame, self.gender_var, "Male", "Female")
-        gender_option.config(font=("Arial", 12))
+        gender_option.config(font=("Arial",38))
         gender_option.grid(row=4, column=1, padx=5, pady=5)
 
-        button = tk.Button(self, text="Next: Enter Intake", font=("Arial", 12),
-                           bg="#2196F3", fg="white", command=self.save_details)
+        button = tk.Button(self, text="Next: Enter Intake", font=("Arial",38),bg="#9e9e9e", fg="white",
+        relief=tk.RAISED, borderwidth=5,
+         command=self.save_details)
         button.pack(pady=15)
 
     def save_details(self):
@@ -162,20 +176,30 @@ class IntakePage(tk.Frame):
         self.controller = controller
 
         # Display current day name at the top center.
-        self.day_label = tk.Label(self, text="", font=("Arial", 14, "bold"), bg="#E3F2FD")
+        self.day_label = tk.Label(self, text="", font=("Arial", 43, "bold"), bg="#E3F2FD")
         self.day_label.pack(pady=5)
 
         # Navigation buttons for previous/next day.
         nav_frame = tk.Frame(self, bg="#E3F2FD")
         nav_frame.pack(pady=5)
-        prev_btn = tk.Button(nav_frame, text="Previous Day", font=("Arial", 12),
-                             bg="#9E9E9E", fg="white", command=self.prev_day)
+        prev_btn = tk.Button(nav_frame, text="Previous Day", font=("Arial",38),
+                             bg="#9E9E9E", fg="white",
+        relief=tk.RAISED, borderwidth=5, command=self.prev_day)
         prev_btn.pack(side="left", padx=10)
-        next_btn = tk.Button(nav_frame, text="Next Day", font=("Arial", 12),
-                             bg="#9E9E9E", fg="white", command=self.next_day)
+        next_btn = tk.Button(nav_frame, text="Next Day", font=("Arial",38),
+                             bg="#9E9E9E", fg="white",relief=tk.RAISED, borderwidth=5, command=self.next_day)
         next_btn.pack(side="left", padx=10)
 
-        title = tk.Label(self, text="Enter Meal Selections & Sleep", font=("Arial", 16, "bold"), bg="#E3F2FD")
+        title = tk.Label(self, text="Enter Meal Selections & Sleep",
+            font=("Arial", 50, "bold"),
+            bg="#A9a9a9",
+            fg="#FFFF00",
+            padx=20,
+            pady=10,
+            relief=tk.RAISED,
+            borderwidth=5,
+            anchor=tk.CENTER,
+            cursor="hand2")
         title.pack(pady=10)
 
         # Create dropdowns for meals.
@@ -184,12 +208,12 @@ class IntakePage(tk.Frame):
         self.meal_vars = {}
         row_index = 0
         for meal in dishes:
-            tk.Label(meals_frame, text=f"{meal}:", font=("Arial", 12), bg="#E3F2FD")\
+            tk.Label(meals_frame, text=f"{meal}:", font=("Arial",38), bg="#E3F2FD")\
                 .grid(row=row_index, column=0, sticky="e", padx=5, pady=5)
             var = tk.StringVar()
             var.set("Select a dish")
             option = tk.OptionMenu(meals_frame, var, *list(dishes[meal].keys()))
-            option.config(font=("Arial", 12))
+            option.config(font=("Arial",38))
             option.grid(row=row_index, column=1, padx=5, pady=5)
             self.meal_vars[meal] = var
             row_index += 1
@@ -197,17 +221,18 @@ class IntakePage(tk.Frame):
         # Sleep hours entry.
         sleep_frame = tk.Frame(self, bg="#E3F2FD")
         sleep_frame.pack(pady=10)
-        tk.Label(sleep_frame, text="Enter Sleep Hours:", font=("Arial", 12), bg="#E3F2FD")\
+        tk.Label(sleep_frame, text="Enter Sleep Hours:", font=("Arial",38), bg="#E3F2FD")\
             .grid(row=0, column=0, padx=5, pady=5)
-        self.sleep_entry = tk.Entry(sleep_frame, font=("Arial", 12))
+        self.sleep_entry = tk.Entry(sleep_frame, font=("Arial",38))
         self.sleep_entry.grid(row=0, column=1, padx=5, pady=5)
 
         btn_frame = tk.Frame(self, bg="#E3F2FD")
         btn_frame.pack(pady=15)
-        calc_btn = tk.Button(btn_frame, text="Calculate Health Metrics", font=("Arial", 12),
-                             bg="#2196F3", fg="white", command=self.calculate_metrics)
+        calc_btn = tk.Button(btn_frame, text="Calculate Health Metrics", font=("Arial",38),
+                             bg="#9E9E9E", fg="white",
+        relief=tk.RAISED, borderwidth=5, command=self.calculate_metrics)
         calc_btn.grid(row=0, column=0, padx=10, pady=5)
-        back_btn = tk.Button(btn_frame, text="Back", font=("Arial", 12),
+        back_btn = tk.Button(btn_frame, text="Back", font=("Arial", 38),
                              bg="#9E9E9E", fg="white", command=lambda: controller.show_frame(EnterDetailsPage))
         back_btn.grid(row=0, column=1, padx=10, pady=5)
 
@@ -312,25 +337,25 @@ class OutputPage(tk.Frame):
         tk.Frame.__init__(self, parent, bg="#E3F2FD")
         self.controller = controller
 
-        title = tk.Label(self, text="Your Health Metrics", font=("Arial", 16, "bold"), bg="#E3F2FD")
+        title = tk.Label(self, text="Your Health Metrics", font=("Arial", 50, "bold"), bg="#E3F2FD")
         title.pack(pady=10)
 
-        self.metrics_label = tk.Label(self, font=("Arial", 12), bg="#E3F2FD")
+        self.metrics_label = tk.Label(self, font=("Arial", 38), bg="#E3F2FD")
         self.metrics_label.pack(pady=10)
 
         btn_frame = tk.Frame(self, bg="#E3F2FD")
         btn_frame.pack(pady=15)
-        pie_btn = tk.Button(btn_frame, text="View Calorie Distribution", font=("Arial", 12),
+        pie_btn = tk.Button(btn_frame, text="View Calorie Distribution", font=("Arial", 38),
                             bg="#4CAF50", fg="white", command=lambda: self.controller.show_frame(PieChartPage))
         pie_btn.grid(row=0, column=0, padx=10, pady=5)
-        back_btn = tk.Button(btn_frame, text="Back", font=("Arial", 12),
+        back_btn = tk.Button(btn_frame, text="Back", font=("Arial", 38),
                              bg="#9E9E9E", fg="white", command=lambda: self.controller.show_frame(IntakePage))
         back_btn.grid(row=0, column=1, padx=10, pady=5)
-        home_btn = tk.Button(btn_frame, text="Home", font=("Arial", 12),
+        home_btn = tk.Button(btn_frame, text="Home", font=("Arial", 38),
                              bg="#2196F3", fg="white", command=lambda: self.controller.show_frame(EnterDetailsPage))
         home_btn.grid(row=0, column=2, padx=10, pady=5)
         # New report button.
-        report_btn = tk.Button(btn_frame, text="Weekly Report", font=("Arial", 12),
+        report_btn = tk.Button(btn_frame, text="Weekly Report", font=("Arial", 38),
                                bg="#FF5722", fg="white", command=self.show_weekly_report)
         report_btn.grid(row=0, column=3, padx=10, pady=5)
 
@@ -357,7 +382,7 @@ class PieChartPage(tk.Frame):
         tk.Frame.__init__(self, parent, bg="#E3F2FD")
         self.controller = controller
 
-        title = tk.Label(self, text="Calorie Distribution", font=("Arial", 16, "bold"), bg="#E3F2FD")
+        title = tk.Label(self, text="Calorie Distribution", font=("Arial", 50, "bold"), bg="#E3F2FD")
         title.pack(pady=10)
 
         self.canvas_frame = tk.Frame(self, bg="#E3F2FD")
@@ -365,10 +390,10 @@ class PieChartPage(tk.Frame):
 
         btn_frame = tk.Frame(self, bg="#E3F2FD")
         btn_frame.pack(pady=15)
-        back_btn = tk.Button(btn_frame, text="Back", font=("Arial", 12),
+        back_btn = tk.Button(btn_frame, text="Back", font=("Arial", 38),
                              bg="#9E9E9E", fg="white", command=lambda: self.controller.show_frame(OutputPage))
         back_btn.grid(row=0, column=0, padx=10, pady=5)
-        home_btn = tk.Button(btn_frame, text="Home", font=("Arial", 12),
+        home_btn = tk.Button(btn_frame, text="Home", font=("Arial", 38),
                              bg="#2196F3", fg="white", command=lambda: self.controller.show_frame(EnterDetailsPage))
         home_btn.grid(row=0, column=1, padx=10, pady=5)
 
@@ -377,13 +402,13 @@ class PieChartPage(tk.Frame):
             widget.destroy()
         total_calories = self.controller.total_calories
         tk.Label(self.canvas_frame, text=f"Total Calories: {total_calories} kcal",
-                 font=("Arial", 12), bg="#E3F2FD").pack(pady=5)
+                 font=("Arial", 38), bg="#E3F2FD").pack(pady=5)
         calorie_intake = {}
         for meal, dish in self.controller.meal_selections.items():
             calorie_intake[meal] = dishes[meal].get(dish, 0) if dish != "Select a dish" else 0
         if all(value == 0 for value in calorie_intake.values()):
             tk.Label(self.canvas_frame, text="No meal data available.",
-                     font=("Arial", 12), bg="#E3F2FD").pack()
+                     font=("Arial", 38), bg="#E3F2FD").pack()
             return
         fig, ax = plt.subplots(figsize=(4, 4), dpi=100)
         colors = ["#FFB74D", "#4CAF50", "#2196F3"]
